@@ -1,0 +1,110 @@
+<html>
+
+<head>
+
+<title>WebRTC Live Editor using PeerJS API</title>
+
+
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+
+<script type="text/javascript" src="http://cdn.peerjs.com/0/peer.js"></script>
+
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+
+<script type="text/javascript">
+
+var conn;
+
+var peer = new Peer({key: 'qiou2l6micmwvcxr'});
+
+peer.on('open', function(id) {
+
+	$('#mid').text(id);
+
+});
+
+peer.on('connection', connect);
+
+function connect(c){
+
+	conn=c;
+
+	$('#pid').val(conn.peer);
+
+	$('#pid').prop('disabled', true);
+
+	$('#progBar').width('100%');
+
+	conn.on('data', function(data){
+
+	$('#inputText').val($('#inputText').val()+data);
+	
+});
+
+}
+
+$(document).ready(function(){
+
+$('#connect').click(function(){
+
+	$('#progBar').width('50%');
+
+	var c = peer.connect($('#pid').val());
+
+	c.on('open', function(){
+
+		connect(c);
+
+	});
+
+});
+
+
+$('#inputText').keypress(function(e){
+
+var ev = e || window.event;
+
+var asciiKey = ev.keyCode || ev.which;
+
+text = String.fromCharCode(asciiKey);
+
+conn.send(text);
+
+});
+
+});
+
+
+</script>
+
+<h1 style="margin-left: 30%;">Live WebRTC Editor</h1>
+
+My ID: <span id="mid"></span><br><br>
+
+Peer ID: 
+
+<input type="text" id="pid" placeholder="Peer's ID">
+
+<input type="button" value="connect" id="connect">
+
+<input type="button" value="disconnect" id="disconnect">
+
+<div class="progress progress-striped active" style="width: 25%;">
+
+<div id="progBar" class="bar" style="width: 0%;"></div>
+
+</div>
+
+<textarea id="inputText" rows="30" style="width: 45%; margin-left: 20%;">
+
+</textarea>
+
+</body>
+
+</html>
